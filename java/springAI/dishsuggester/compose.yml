@@ -1,0 +1,15 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17 
+    container_name: pgvector-doggydb
+    environment:
+      POSTGRES_USER: ${YOUR_DOGGY_DB_USER}
+      POSTGRES_PASSWORD: ${YOUR_DOGGY_DB_PASSWORD}
+      POSTGRES_DB: doggybagdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: 
