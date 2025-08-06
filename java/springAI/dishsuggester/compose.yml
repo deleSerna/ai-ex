@@ -1,6 +1,6 @@
 services:
   db:
-    image: pgvector/pgvector:pg17 
+    image: pgvector/pgvector:pg17
     container_name: pgvector-doggydb
     environment:
       POSTGRES_USER: ${YOUR_DOGGY_DB_USER}

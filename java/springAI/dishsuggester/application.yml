@@ -1,7 +1,7 @@
 spring:
   main:
     allow-bean-definition-overriding: true
-  datasource: 
+  datasource:
     url: jdbc:postgresql://localhost:5432/${YOUR_DOGGY_DB}
     username: ${YOUR_DOGGY_DB_USER}
     password: ${YOUR_DOGGY_DB_PASSWORD}
@@ -10,8 +10,10 @@ spring:
       api-key: ${PERPLEXITY_API_KEY}
       base-url: https://api.perplexity.ai
       chat:
-        model: llama-3.1-sonar-small-128k-online
         completions-path: /chat/completions
+        options:
+          model: sonar-pro
+
       embedding:
         enabled: false
     ollama:
@@ -19,20 +21,20 @@ spring:
       embedding:
         enabled: true
         model: nomic-embed-text # Smaller models https://ollama.com/blog/embedding-models
-#    vertex:
-#      ai:
-#        gemini:
-#          project-id: ${VERTEX_AI_PROJECT}
-#          location: ${VERTEX_AI_LOC}
-#          chat:
-#            options:
-#              model: gemini-2.0-flash
-#        embedding:
-#          project-id: ${VERTEX_AI_PROJECT}
-#          location: ${VERTEX_AI_LOC}
-#          text:
-#            options:
-#              model: text-embedding-005
+    #    vertex:
+    #      ai:
+    #        gemini:
+    #          project-id: ${VERTEX_AI_PROJECT}
+    #          location: ${VERTEX_AI_LOC}
+    #          chat:
+    #            options:
+    #              model: gemini-2.0-flash
+    #        embedding:
+    #          project-id: ${VERTEX_AI_PROJECT}
+    #          location: ${VERTEX_AI_LOC}
+    #          text:
+    #            options:
+    #              model: text-embedding-005
     vectorstore:
       pgvector:
         schema-name: ${YOUR_DOGGY_DB}

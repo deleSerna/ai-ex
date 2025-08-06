@@ -1,13 +1,13 @@
-package com.polika.dishsuggester;
+package com.polika.ingestion;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,24 +16,21 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Component
-public class IngestionPipelineVertex {
-
+@Component
+public class IngestionPipeline {
+    final Path resourceDirectoryPath;
+    private final String DEFAULT_VECTOR_TABLE_NAME = "vector_store";
     private final VectorStore vectorStore;
-
-    @Value("classpath:breakfast/backend.txt")
-    Resource backendJobDescription;
-    @Value("classpath:jobs/fullstack.txt")
-    Resource fullstackJobDescription;
-    @Value("classpath:jobs/marketing.txt")
-    Resource marketingJobDescription;
-
-    final Path resourceDirectoryPath ;
     int idCounter;
-    IngestionPipelineVertex(VectorStore vectorStore) {
+    List<String> ids = new ArrayList<>();
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    IngestionPipeline(VectorStore vectorStore) {
         this.vectorStore = vectorStore;
         try {
             resourceDirectoryPath = Paths.get(getClass().getClassLoader().getResource("breakfast").toURI());
@@ -42,24 +39,37 @@ public class IngestionPipelineVertex {
         }
     }
 
-    @PostConstruct
+    /**
+     * Use this if we want to ingest automatically on start up.
+     */
+    /*@PostConstruct
     public void run() {
-        System.out.println("####I  am running");
         List<Document> documents;
         try {
             documents = Files.list(resourceDirectoryPath)
-                    .map(x-> new FileSystemResource(x))
-                    .map(x->getDocument(x))
+                    .map(x -> new FileSystemResource(x))
+                    .map(x -> getDocument(x))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("##Adding "+ documents.size() + " to the vector store.");
-        /*var backendDocument = getDocument(backendJobDescription, "1");
-        var frontendDocument = getDocument(fullstackJobDescription, "2");
-        var marketingDocument = getDocument(marketingJobDescription, "3");
-        List<Document> documents = List.of(backendDocument, frontendDocument, marketingDocument);*/
+        System.out.println("##Adding " + documents.size() + " to the vector store.");
         vectorStore.add(new TokenTextSplitter().apply(documents));
+    }
+    */
+    public boolean ingest() {
+        List<Document> documents;
+        try {
+            documents = Files.list(resourceDirectoryPath)
+                    .map(x -> new FileSystemResource(x))
+                    .map(x -> getDocument(x))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("##Adding " + documents.size() + " to the vector store.");
+        vectorStore.add(new TokenTextSplitter().apply(documents));
+        return !documents.isEmpty();
     }
 
     private Document getDocument(Resource textFile) {
@@ -73,8 +83,10 @@ public class IngestionPipelineVertex {
         return documents.getFirst();
     }
 
-    public String getvectoreStore() {
-        return  vectorStore.getName();
+    public boolean delete() {
+        //TODO(): Improve this by using vector store.
+        jdbcTemplate.execute("TRUNCATE TABLE " + System.getenv("YOUR_DOGGY_DB") + "." + DEFAULT_VECTOR_TABLE_NAME);
+        return true;
     }
 }
 
