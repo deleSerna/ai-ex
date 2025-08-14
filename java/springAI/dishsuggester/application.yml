@@ -13,7 +13,6 @@ spring:
         completions-path: /chat/completions
         options:
           model: sonar-pro
-
       embedding:
         enabled: false
     ollama:
@@ -21,20 +20,6 @@ spring:
       embedding:
         enabled: true
         model: nomic-embed-text # Smaller models https://ollama.com/blog/embedding-models
-    #    vertex:
-    #      ai:
-    #        gemini:
-    #          project-id: ${VERTEX_AI_PROJECT}
-    #          location: ${VERTEX_AI_LOC}
-    #          chat:
-    #            options:
-    #              model: gemini-2.0-flash
-    #        embedding:
-    #          project-id: ${VERTEX_AI_PROJECT}
-    #          location: ${VERTEX_AI_LOC}
-    #          text:
-    #            options:
-    #              model: text-embedding-005
     vectorstore:
       pgvector:
         schema-name: ${YOUR_DOGGY_DB}
