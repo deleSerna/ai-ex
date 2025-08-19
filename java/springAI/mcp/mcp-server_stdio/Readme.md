@@ -7,9 +7,8 @@ the MCP server using the STDIO transport.
 
 Supporting the Perplexity was not straightforward as expected because constructor injection for
 openAiChatModel for the perplexity chat model did not work. Most probably this could be due to
-the ambiguity to choose Perplexity or OpenAI chat model.
-Hence, created the chat model explicitly for the Perplexity and 
-exposed it as `primary bean` in the McpServerStdioApplication class.
+the ambiguity to choose between Perplexity and OpenAI chat model.
+Hence, created the chat model explicitly for the Perplexity and exposed it as `primary bean` in the McpServerStdioApplication class.
 
 # Run
  - Build  the project using `./gradlew clean build`
