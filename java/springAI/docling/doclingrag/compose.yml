@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  docling:
+    image: quay.io/docling-project/docling-serve
+    container_name : mydocling
+    ports:
+      - "5001:5001"
+    volumes:
+      - doclingdata:/input
+volumes:
+  doclingdata:
